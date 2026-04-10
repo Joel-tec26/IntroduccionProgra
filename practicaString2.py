@@ -117,7 +117,7 @@ def despedasarUrl (ptexto):
     else:
         recurso= "cualquier otra pagina del sitio web"
     tipoRecurso= ptexto[-3:]
-    return f"Nombre del Protocolo: {nomProt} \n Por ende es un protocolo: {tipoProt} \n Nombre del Host: {nomHost} \n Recurso: {recurso} \n Concideración del recurso: {tipoRecurso}"
+    return f"Nombre del Protocolo: {nomProt} \nPor ende es un protocolo: {tipoProt} \nNombre del Host: {nomHost} \nRecurso: {recurso} \nConcideración del recurso: {tipoRecurso}"
 
 
 
