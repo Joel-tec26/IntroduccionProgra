@@ -15,10 +15,10 @@ def invertirPalabras (ptexto):
     Salidas:
     -resultado(str): texto invertido 
     """
-    biblioteca = "aáAeéEiíIoóOUuúü"
+    
     if ptexto=="0":
         return ""
-    if ptexto[-1] in biblioteca:
+    if ptexto[-1] in "aáAÁeéEÉiíIÍoóOÓUuúüÚ":
         resultado=""
         indice =-1
         while indice >= -len(ptexto):
@@ -61,8 +61,8 @@ def calcularEdad (pfecha1, pfecha2):
     dia1= int(pfecha1[8:])
     dia2= int(pfecha2[8:])
     resultAnno= anno2-anno1
-    resulMes=(mes2-mes1)
-    resulDias=(dia2-dia1)
+    resulMes=mes2-mes1
+    resulDias=dia2-dia1
     if resultAnno == 0:
         if  resulMes<0:
             if resulDias <0:
@@ -70,9 +70,9 @@ def calcularEdad (pfecha1, pfecha2):
         return "tiene meses no ha cumplido un año"
     elif resultAnno<0:
         return "No es posible calcular la edad, pues no ha podido nacer"
-    if resulMes ==0:
-            if resulDias<0:
-                resultAnno-=1
+    if resulMes ==0:    #en el caso de la persona que cumple años no se le sume un año más
+        if resulDias<0:
+            resultAnno-=1
     elif resulMes<0:
         resultAnno-=1
     return resultAnno
@@ -123,6 +123,7 @@ def despedasarUrl (ptexto):
 
 #programa principal 
 # Reto 3 stringv2
+"""""
 print ("Reto 3 srtingv2")
 print(invertirPalabras(input("ingrese una palabra: ")))
 print()
@@ -134,7 +135,7 @@ print (calcularEdad("2000-01-04", obtenerFecha()))
 print (calcularEdad("2026-08-26", obtenerFecha()))
 print (calcularEdad("2026-01-05", obtenerFecha()))
 print()
-
+"""
 # reto 3 examenParte2
 print("\n reto 3 examenParte2")
 print(despedasarUrl("http://www.alegsa.com.ar/Diccionario/index.php"))
