@@ -28,7 +28,7 @@ def detectarVuelo(bloqueTexto):
         return False
 
 def validarEmail(email):
-    patron = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    patron = r"^[a-zA-Z0-9._%+-]+@+floo+\.+com$"
     return bool(re.match(patron, email))
 
 # funciones de calculos
@@ -66,56 +66,74 @@ def calcularFlete(pesoReal, largo, ancho, alto, opcionDestino):
 
 # funciones generales 
 
-def procesarLog():
-    print("\n ===============")
-    print(" Opción 1")
-    print("================")
-    global bdVuelos
-    parrafo = input("Ingrese el párrafo del log: ")
+def procesarLog(parrafo, bdVuelos):
+    """
+    """
     piezas = parrafo.split()
-    print("\n====Analizando piezas del log ===")
     for pieza in piezas:
         piezaLimpia = pieza.strip(",.;/-:_*")
+        
+        # Se asume que validarVuelo existe en otra parte del código
         if validarVuelo(piezaLimpia):
-            print(f"Código válido encontrado: {piezaLimpia}")
             if piezaLimpia not in bdVuelos:
                 if bdVuelos == "":
                     bdVuelos = piezaLimpia
                 else:
                     bdVuelos += "," + piezaLimpia
-        else:
-            pass 
+    return bdVuelos
+
+def procesarLogaux():
+    """
+    """
+    global bdVuelos
+    print("\n ===============")
+    print(" Opción 1")
+    print("================")
+    parrafo = input("Ingrese el párrafo del log: ")
+    print("\n====Analizando piezas del log ===")
+    bdVuelos = procesarLog(parrafo, bdVuelos)
     print("\nProcesamiento completo.")
     print(f"Vuelos registrados: {bdVuelos}")
+    input("pulse ENTER para continuar: ")
 
-def Ingresarpasajero():
-    print("\n ===============")
-    print(" Opción 2")
-    print("================")
-    global bdPasajeros, bdVuelos
-    datoSucio = input("Ingrese datos (Nombre-Vuelo-Email): ")
+def Ingresarpasajero(datoSucio, bdPasajeros, bdVuelos):
+    """
+    """
     partes = datoSucio.split("-")
     if len(partes) != 3:
-        print("Error: Formato incorrecto.")
-        return
+        return False, "Error: Formato incorrecto."
     nombre = normalizarNombre(partes[0])
     vuelo = partes[1].strip()
     email = partes[2].strip()
     if not validarVuelo(vuelo):
-        print("Error: Vuelo inválido.")
-    elif not detectarVuelo(vuelo):
-        print("Error: El vuelo no existe en el Log.")
-    elif not validarEmail(email):
-        print("Error: Email inválido.")
+        return False, "Error: Vuelo inválido."
+    if vuelo not in bdVuelos:
+        return False, "Error: El vuelo no existe en el Log."
+    if not validarEmail(email):
+        return False, "Error: Email inválido."
+    registro = f"{vuelo}→{nombre}→{email}"
+    if bdPasajeros == "":
+        nuevaBd = registro
     else:
-        # Formato: Vuelo→Nombre→Email
-        registro = f"{vuelo}→{nombre}→{email}"
-        if bdPasajeros == "":
-            bdPasajeros = registro
-        else:
-            # Separa pasajeros con ¬
-            bdPasajeros += "¬" + registro
-        print(f"Pasajero {nombre} registrado.")
+        nuevaBd = bdPasajeros + "¬" + registro
+        
+    return True, (nuevaBd, nombre)
+
+def Ingresarpasajeraux():
+    """
+    """
+    global bdPasajeros, bdVuelos
+    print("\n ===============")
+    print(" Opción 2")
+    print("================")
+    dato = input("Ingrese datos (Nombre-Vuelo-Email): ")
+    exito, resultado = Ingresarpasajero(dato, bdPasajeros, bdVuelos)
+    if exito:
+        bdPasajeros, nombreRegistrado = resultado
+        print(f"Pasajero {nombreRegistrado} registrado.")
+    else:
+        print(resultado)
+    input("pulse ENTER para continuar: ")
 
 def calcularFleteaux():
     print("\n ===============")
@@ -137,8 +155,7 @@ def calcularFleteaux():
             print(f"\n¡Error! {opcion} no es una opción válida.")
             print("Por favor, digite únicamente el número 1 o el número 2.")
     volumetrico, tasable, montoPagar = calcularFlete(pReal, largo, ancho, altura, opcion)
-    
-    #resultados al usuario
+#resultados al usuario
     print("\n ---------------")
     print(f"Resultados:")
     print(f"Peso Volumétrico: {volumetrico:} kg")
@@ -146,20 +163,33 @@ def calcularFleteaux():
     print(f"Total a pagar: ₡{montoPagar:}")
     print("----------------")
     print("Monto sumado al total recaudado")
+    input("pulse ENTER para continuar: ")
 
-def verPasajerosRegistrados():
+def verPasajerosRegistrados(bdPasajeros, sumaFletes):
+    """
+    """
+    if bdPasajeros == "":
+        return "", sumaFletes
+    return bdPasajeros, sumaFletes
+
+def verPasajerosRegistradosaux():
+    """
+    """
+    global bdPasajeros, sumaFletes
     print("\n ===============")
     print(" Opción 4")
     print("================")
-    global bdPasajeros, sumaFletes
-    if bdPasajeros == "":
+    datosBrutos, total = verPasajerosRegistrados(bdPasajeros, sumaFletes)
+    if datosBrutos == "":
         print("\nNo hay pasajeros en el buffer.")
     else:
         print("\n--- Lista de pasajeros registrados ---")
-        registros = bdPasajeros.split("¬")
-        for r in registros:
-            datos = r.split("→")
-            print(f"Vuelo: {datos[0]}  Pasajero: {datos[1]}  Email: {datos[2]}")
+        for registro in datosBrutos.split("¬"):
+            detalles = registro.split("→")
+            vuelo = detalles[0]
+            nombre = detalles[1]
+            email = detalles[2]
+            print(f"Vuelo: {vuelo}  Pasajero: {nombre}  Email: {email}")
     print("-------------")
-    print(f"Total recaudado por fletes: ₡{sumaFletes:}")
-
+    print(f"Total recaudado por fletes: ₡{total}")
+    input("pulse ENTER para continuar: ")
