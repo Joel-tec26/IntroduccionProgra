@@ -1,6 +1,6 @@
 # Creado por: Joel Jesús Porras Muñoz y Alexis Torres
 # Fecha de creación: 18/04/2026 2pm
-# Ultíma modificación: 19/4/2026 6pm
+# Ultíma modificación: 20/4/2026 3pm
 # Versión: 3.14
 
 # importación de metodos
@@ -23,7 +23,7 @@ def validarVuelo(ptexto):
     Salidas:
     -resultado(bool): True si el formato es válido, False en caso contrario
     """
-    return bool(re.match(r"^[A-Z]{3}\d{6}$", ptexto))
+    return bool(re.match(r"^[a-zA-Z]{3}\d{6}$", ptexto))
 
 def normalizarNombre(nombreSucio):
     """
@@ -129,7 +129,7 @@ def procesarLog(parrafo, bdVuelos):
     """
     piezas = parrafo.split()
     for pieza in piezas:
-        piezaLimpia = pieza.strip(",.;/-:_*")
+        piezaLimpia = pieza.upper().strip(",.;/-:_*")
         if validarVuelo(piezaLimpia):
             if piezaLimpia not in bdVuelos:
                 if bdVuelos == "":
@@ -179,7 +179,7 @@ def Ingresarpasajero(datoSucio, bdPasajeros, bdVuelos):
     if len(partes) != 3:
         return False, "Error: Formato incorrecto."
     nombre = normalizarNombre(partes[0])
-    vuelo = partes[1].strip()
+    vuelo = partes[1].strip().upper()
     email = partes[2].strip()
     if not validarVuelo(vuelo):
         return False, "Error: Vuelo inválido."
@@ -346,7 +346,7 @@ def modificarPasajerosaux():
         print("\nNo hay pasajeros en el buffer.")
         input("pulse ENTER para continuar: ")
         return
-    codigoPasajero = input("ingrese el código de vuelo del pasajero que quiere modificar: ")
+    codigoPasajero = input("ingrese el código de vuelo del pasajero que quiere modificar: ").strip().upper()
     if not detectarVuelo(codigoPasajero) or codigoPasajero=="":
         print("Error: Pasajero no encontrado")
         input("pulse ENTER para continuar: ")
