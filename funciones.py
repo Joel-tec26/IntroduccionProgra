@@ -64,7 +64,7 @@ def validarEmail(email):
     Salidas:
     -resultado(bool): True si el correo es válido, False en caso contrario
     """
-    patron = r"^[a-zA-Z0-9._%+-]+@floo\.com$"
+    patron = r"^[a-zA-Z0-9._%+-]+@foo\.com$"
     return bool(re.match(patron, email))
 
 # funciones de calculos
@@ -186,7 +186,7 @@ def Ingresarpasajero(datoSucio, bdPasajeros, bdVuelos):
     if vuelo not in bdVuelos:
         return False, "Error: El vuelo no existe en el Log."
     if not validarEmail(email):
-        return False, "Error: Email inválido."
+        return False, "Error: Email inválido, es algo@foo.com."
     registro = f"{vuelo}→{nombre}→{email}"
     if bdPasajeros == "":
         nuevaBd = registro
