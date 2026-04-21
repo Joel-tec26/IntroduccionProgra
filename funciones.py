@@ -38,6 +38,11 @@ def normalizarNombre(nombreSucio):
     en mayúscula
     """
     return " ".join(nombreSucio.strip().split()).title()
+
+def validarNombre(pnombre):
+    if bool(re.match(r"^[a-zA-Zá-úä-üÁ-ÚÄ-Ü]+\ [a-z-A-Zá-úä-üÄ-Ü-Á-Ú]+$", pnombre)):
+        return True
+    return False
     
 def detectarVuelo(bloqueTexto):
     """
@@ -187,12 +192,25 @@ def Ingresarpasajero(datoSucio, bdPasajeros, bdVuelos):
         return False, "Error: El vuelo no existe en el Log."
     if not validarEmail(email):
         return False, "Error: Email inválido, es algo@foo.com."
+    if not validarNombre(nombre):
+        return False, "Error: Debe ingresar un nombre y seguir el formato de este (nombre apellido)"
+    if bdPasajeros != "":
+        listaRegistros = bdPasajeros.split("¬")
+        for registroExistente in listaRegistros:
+            campos = registroExistente.split("→")
+            if len(campos) == 3:
+                vueloGuardado = campos[0].strip().upper()
+                nombreGuardado = campos[1].strip()
+                emailGuardado = campos[2].strip().lower()
+                if nombreGuardado == nombre and vueloGuardado == vuelo:
+                    return False, f"Error: {nombre} ya está registrado en el vuelo {vuelo}."
+                if emailGuardado == email:
+                    return False, "Error: El email ya está en uso por otro pasajero."
     registro = f"{vuelo}→{nombre}→{email}"
     if bdPasajeros == "":
         nuevaBd = registro
     else:
         nuevaBd = bdPasajeros + "¬" + registro
-        
     return True, (nuevaBd, nombre)
 
 def ingresarPasajeraux():
@@ -212,7 +230,7 @@ def ingresarPasajeraux():
         print("\nNo hay vuelos registrados en el log.")
         input("pulse ENTER para continuar: ")
         return
-    dato = input("Ingrese datos (Nombre-Vuelo-Email): ")
+    dato = input("Ingrese datos (Nombre Apellido-Vuelo-Email): ")
     exito, resultado = Ingresarpasajero(dato, bdPasajeros, bdVuelos)
     if exito:
         bdPasajeros, nombreRegistrado = resultado
@@ -351,8 +369,11 @@ def modificarPasajerosaux():
         print("Error: Pasajero no encontrado")
         input("pulse ENTER para continuar: ")
         return
-        
     nuevoNombre = input("ingrese el nuevo nombre: ")
+    if not validarNombre(nuevoNombre):
+        print ("Error: Debe ingresar un nombre y seguir el formato de este (nombre apellido)")
+        input("pulse ENTER para continuar: ")
+        return
     nuevoCorreo = input("ingrese el nuevo correo: ")
     if not validarEmail(nuevoCorreo):
         print("Error: Email inválido.")
