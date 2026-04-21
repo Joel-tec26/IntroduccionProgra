@@ -185,7 +185,7 @@ def Ingresarpasajero(datoSucio, bdPasajeros, bdVuelos):
         return False, "Error: Formato incorrecto."
     nombre = normalizarNombre(partes[0])
     vuelo = partes[1].strip().upper()
-    email = partes[2].strip()
+    email = partes[2].strip().lower()
     if not validarVuelo(vuelo):
         return False, "Error: Vuelo inválido."
     if vuelo not in bdVuelos:
@@ -202,8 +202,8 @@ def Ingresarpasajero(datoSucio, bdPasajeros, bdVuelos):
                 vueloGuardado = campos[0].strip().upper()
                 nombreGuardado = campos[1].strip()
                 emailGuardado = campos[2].strip().lower()
-                if nombreGuardado == nombre and vueloGuardado == vuelo:
-                    return False, f"Error: {nombre} ya está registrado en el vuelo {vuelo}."
+                if vueloGuardado == vuelo:
+                    return False, f"Error: el vuelo {vuelo} ya tiene una persona registrada."
                 if emailGuardado == email:
                     return False, "Error: El email ya está en uso por otro pasajero."
     registro = f"{vuelo}→{nombre}→{email}"
