@@ -26,15 +26,15 @@ while True:
     opcion=(input("Seleccione: "))
 
     if opcion=="1":
-        bdVuelos=procesarLogaux(bdVuelos)
+        bdVuelos=procesarLogAux(bdVuelos)
     elif opcion=="2":
-        bdPasajeros= ingresarPasajeraux(bdVuelos,bdPasajeros)
+        bdPasajeros= ingresarPasajerAux(bdVuelos,bdPasajeros)
     elif opcion=="3":
-        sumaFletes+=calcularFleteaux(sumaFletes)
+        sumaFletes+=calcularFleteAux(sumaFletes)
     elif opcion=="4":
-        verPasajerosRegistradosaux(bdPasajeros, sumaFletes)
+        verPasajerosRegistradosAux(bdPasajeros, sumaFletes)
     elif opcion=="5":
-        bdPasajeros=modificarPasajerosaux(bdPasajeros, bdVuelos)
+        bdPasajeros=modificarPasajerosAux(bdPasajeros, bdVuelos)
     elif opcion=="6":
         print("cerrando...")
         break

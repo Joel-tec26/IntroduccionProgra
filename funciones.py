@@ -144,7 +144,7 @@ def procesarLog(parrafo, bdVuelos):
                     bdVuelos += "," + piezaLimpia
     return bdVuelos
 
-def procesarLogaux(bdVuelos):
+def procesarLogAux(bdVuelos):
     """
     Funcionalidad:Permite al usuario ingresar un párrafo, procesa los 
     códigos de vuelo y muestra los resultados en pantalla.
@@ -214,7 +214,7 @@ def Ingresarpasajero(datoSucio, bdPasajeros, bdVuelos):
         nuevaBd = bdPasajeros + "¬" + registro
     return True, (nuevaBd, nombre)
 
-def ingresarPasajeraux(bdVuelos, bdPasajeros):
+def ingresarPasajerAux(bdVuelos, bdPasajeros):
     """
     Funcionalidad:Solicita al usuario los datos de un pasajero, intenta 
     registrarlo y muestra el resultado en pantalla.
@@ -240,7 +240,7 @@ def ingresarPasajeraux(bdVuelos, bdPasajeros):
     input("pulse ENTER para continuar: ")
     return bdPasajeros
 
-def calcularFleteaux(sumaFletes):
+def calcularFleteAux(sumaFletes):
     """
     Funcionalidad: Solicita al usuario los datos de un paquete, calcula 
     el flete y muestra los resultados en pantalla.
@@ -314,7 +314,7 @@ def verPasajerosRegistrados(bdPasajeros, sumaFletes):
         return "", sumaFletes
     return bdPasajeros, sumaFletes
 
-def verPasajerosRegistradosaux(bdPasajeros, sumaFletes):
+def verPasajerosRegistradosAux(bdPasajeros, sumaFletes):
     """
     Funcionalidad: Muestra en pantalla la lista de pasajeros 
     registrados y el total recaudado.
@@ -343,7 +343,7 @@ def verPasajerosRegistradosaux(bdPasajeros, sumaFletes):
     input("pulse ENTER para continuar: ")
     return
 
-def modificarPasajerosaux(bdPasajeros, bdVuelos):
+def modificarPasajerosAux(bdPasajeros, bdVuelos):
     """
     Funcionalidad: Permite al usuario modificar los datos de un 
     pasajero existente y muestra el resultado en pantalla.
