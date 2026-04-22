@@ -1,15 +1,10 @@
 # Creado por: Joel Jesús Porras Muñoz y Alexis Torres
 # Fecha de creación: 18/04/2026 2pm
-# Ultíma modificación: 20/4/2026 3pm
+# Ultíma modificación: 22/4/2026 10:15am
 # Versión: 3.14
 
 # importación de metodos
 import re
-
-#Variables de tipo global
-bdVuelos = ""
-bdPasajeros = ""
-sumaFletes = 0.0
 
 # definición de funciones
 # principales
@@ -40,11 +35,19 @@ def normalizarNombre(nombreSucio):
     return " ".join(nombreSucio.strip().split()).title()
 
 def validarNombre(pnombre):
-    if bool(re.match(r"^[a-zA-Zá-úä-üÁ-ÚÄ-Ü]+\ [a-z-A-Zá-úä-üÄ-Ü-Á-Ú]+$", pnombre)):
+    """
+    Funcionalidad:
+    Verifica si un nombre cumple el formato
+    Entradas:
+    -pnombre(str): texto que e valida
+    Salidas:
+    -resultado(bool): True si cumple, False en caso contrario
+    """
+    if bool(re.match(r"^[a-zA-Zá-úä-üÁ-ÚÄ-Ü\s\.\']+$", pnombre)) and " " in pnombre.strip():
         return True
     return False
     
-def detectarVuelo(bloqueTexto):
+def detectarVuelo(bloqueTexto, bdVuelos):
     """
     Funcionalidad:
     Verifica si un código de vuelo existe dentro de la base de datos de
@@ -54,7 +57,6 @@ def detectarVuelo(bloqueTexto):
     Salidas:
     -resultado(bool): True si el vuelo está presente, False en caso contrario
     """
-    global bdVuelos
     if bloqueTexto in bdVuelos:
         return True
     else:
@@ -73,7 +75,7 @@ def validarEmail(email):
     return bool(re.match(patron, email))
 
 # funciones de calculos
-def calcularFlete(pesoReal, largo, ancho, alto, opcionDestino):
+def calcularFlete(pesoReal, largo, ancho, alto, opcionDestino, sumaFletes):
     """
     Funcionalidad:
     Calcula el costo de un flete considerando peso real, peso volumétrico,
@@ -89,7 +91,6 @@ def calcularFlete(pesoReal, largo, ancho, alto, opcionDestino):
     -pesoT(float): peso tasable utilizado para el cálculo
     -totalFinal(float): monto total a pagar por el flete
     """
-    global sumaFletes
     #  Peso Volumétrico
     pesoV = (largo * ancho * alto) / 5000
     # Peso Tasable
@@ -143,7 +144,7 @@ def procesarLog(parrafo, bdVuelos):
                     bdVuelos += "," + piezaLimpia
     return bdVuelos
 
-def procesarLogaux():
+def procesarLogaux(bdVuelos):
     """
     Funcionalidad:Permite al usuario ingresar un párrafo, procesa los 
     códigos de vuelo y muestra los resultados en pantalla.
@@ -153,7 +154,6 @@ def procesarLogaux():
     -mensaje(str): impresión en pantalla con los vuelos registrados
     o mensaje de ausencia
     """
-    global bdVuelos
     print("\n ===============")
     print(" Opción 1")
     print("================")
@@ -162,11 +162,11 @@ def procesarLogaux():
     bdVuelos = procesarLog(parrafo, bdVuelos)
     print("\nProcesamiento completo.")
     if bdVuelos == "":
-        print("No se registro ningún vuelo")
+        print("No se registró ningún vuelo")
     else:
         print(f"Vuelos registrados: {bdVuelos}")
     input("pulse ENTER para continuar: ")
-    return
+    return bdVuelos
 
 def Ingresarpasajero(datoSucio, bdPasajeros, bdVuelos):
     """
@@ -180,20 +180,21 @@ def Ingresarpasajero(datoSucio, bdPasajeros, bdVuelos):
     -exito(bool): indica si el registro fue exitoso
     -resultado(str): nueva base de datos y nombre, o mensaje de error
     """
-    partes = datoSucio.split("-")
-    if len(partes) != 3:
-        return False, "Error: Formato incorrecto."
-    nombre = normalizarNombre(partes[0])
-    vuelo = partes[1].strip().upper()
-    email = partes[2].strip().lower()
-    if not validarVuelo(vuelo):
-        return False, "Error: Vuelo inválido."
-    if vuelo not in bdVuelos:
-        return False, "Error: El vuelo no existe en el Log."
-    if not validarEmail(email):
-        return False, "Error: Email inválido, es algo@foo.com."
+    partes = datoSucio.strip().split()
+    if len(partes) < 3:
+        return False, "Formato incorrecto. Uitilice: Nombre Apellido Vuelo Email"
+    email = partes[-1].lower()
+    vuelo = partes[-2].upper()
+    nombreSucio = " ".join(partes[:-2])
+    nombre = normalizarNombre(nombreSucio)
     if not validarNombre(nombre):
-        return False, "Error: Debe ingresar un nombre y seguir el formato de este (nombre apellido)"
+        return False, "El nombre debe ser 'Nombre Apellido' (solo letras)."
+    if not validarVuelo(vuelo):
+        return False, "El código de vuelo debe tener 3 letras y 6 números."
+    if vuelo not in bdVuelos:
+        return False, f"El vuelo {vuelo} no existe en el sistema."
+    if not validarEmail(email):
+        return False, f"El correo '{email}' es inválido. Debe ser Sucorreo@foo.com"
     if bdPasajeros != "":
         listaRegistros = bdPasajeros.split("¬")
         for registroExistente in listaRegistros:
@@ -203,9 +204,9 @@ def Ingresarpasajero(datoSucio, bdPasajeros, bdVuelos):
                 nombreGuardado = campos[1].strip()
                 emailGuardado = campos[2].strip().lower()
                 if vueloGuardado == vuelo:
-                    return False, f"Error: el vuelo {vuelo} ya tiene una persona registrada."
+                    return False, f"El vuelo {vuelo} ya tiene una persona registrada."
                 if emailGuardado == email:
-                    return False, "Error: El email ya está en uso por otro pasajero."
+                    return False, "El email ya está en uso por otro pasajero."
     registro = f"{vuelo}→{nombre}→{email}"
     if bdPasajeros == "":
         nuevaBd = registro
@@ -213,7 +214,7 @@ def Ingresarpasajero(datoSucio, bdPasajeros, bdVuelos):
         nuevaBd = bdPasajeros + "¬" + registro
     return True, (nuevaBd, nombre)
 
-def ingresarPasajeraux():
+def ingresarPasajeraux(bdVuelos, bdPasajeros):
     """
     Funcionalidad:Solicita al usuario los datos de un pasajero, intenta 
     registrarlo y muestra el resultado en pantalla.
@@ -222,15 +223,14 @@ def ingresarPasajeraux():
     Salidas:
     -mensaje(str): confirmación de registro o mensaje de error mostrado en pantalla
     """
-    global bdPasajeros, bdVuelos
     print("\n ===============")
     print(" Opción 2")
     print("================")
     if bdVuelos == "":
         print("\nNo hay vuelos registrados en el log.")
         input("pulse ENTER para continuar: ")
-        return
-    dato = input("Ingrese datos (Nombre Apellido-Vuelo-Email): ")
+        return bdPasajeros
+    dato = input("Ingrese datos (Nombre Apellido Vuelo Email): ")
     exito, resultado = Ingresarpasajero(dato, bdPasajeros, bdVuelos)
     if exito:
         bdPasajeros, nombreRegistrado = resultado
@@ -238,9 +238,9 @@ def ingresarPasajeraux():
     else:
         print(resultado)
     input("pulse ENTER para continuar: ")
-    return
+    return bdPasajeros
 
-def calcularFleteaux():
+def calcularFleteaux(sumaFletes):
     """
     Funcionalidad: Solicita al usuario los datos de un paquete, calcula 
     el flete y muestra los resultados en pantalla.
@@ -261,23 +261,23 @@ def calcularFleteaux():
         try:
             pReal = float(input("Peso real de la carga (kg): "))
             if pReal <= 0:
-                print("\nError: Todos los valores deben ser mayores a 0.")
+                print("\nTodos los valores deben ser mayores a 0.")
                 continue
             largo = float(input("Largo (cm): "))
             if largo <= 0:
-                print("\nError: Todos los valores deben ser mayores a 0.")
+                print("\nTodos los valores deben ser mayores a 0.")
                 continue
             ancho = float(input("Ancho (cm): "))
             if ancho <= 0:
-                print("\nError: Todos los valores deben ser mayores a 0.")
+                print("\nTodos los valores deben ser mayores a 0.")
                 continue
             altura = float(input("Alto (cm): "))
             if altura <= 0:
-                print("\nError: Todos los valores deben ser mayores a 0.")
+                print("\nTodos los valores deben ser mayores a 0.")
                 continue
             break
         except ValueError:
-            print("\nError: Ingrese únicamente valores numéricos.")
+            print("\nIngrese únicamente valores numéricos.")
     while True:
         print("\nSeleccione el destino:")
         print("[1] Internacional (+15% Aduana)")
@@ -286,9 +286,9 @@ def calcularFleteaux():
         if opcion == "1" or opcion == "2":
             break
         else:
-            print(f"\n¡Error! {opcion} no es una opción válida.")
+            print(f"\n\"{opcion}\" no es una opción válida.")
             print("Por favor, digite únicamente el número 1 o el número 2.")
-    volumetrico, tasable, montoPagar = calcularFlete(pReal, largo, ancho, altura, opcion)
+    volumetrico, tasable, montoPagar = calcularFlete(pReal, largo, ancho, altura, opcion, sumaFletes)
     print("\n ---------------")
     print(f"Resultados:")
     print(f"Peso Volumétrico: {volumetrico:} kg")
@@ -297,7 +297,7 @@ def calcularFleteaux():
     print("----------------")
     print("Monto sumado al total recaudado")
     input("pulse ENTER para continuar: ")
-    return
+    return montoPagar
 
 def verPasajerosRegistrados(bdPasajeros, sumaFletes):
     """
@@ -314,7 +314,7 @@ def verPasajerosRegistrados(bdPasajeros, sumaFletes):
         return "", sumaFletes
     return bdPasajeros, sumaFletes
 
-def verPasajerosRegistradosaux():
+def verPasajerosRegistradosaux(bdPasajeros, sumaFletes):
     """
     Funcionalidad: Muestra en pantalla la lista de pasajeros 
     registrados y el total recaudado.
@@ -324,12 +324,11 @@ def verPasajerosRegistradosaux():
     Salidas:
     -mensaje(str): lista de pasajeros y total recaudado impresos en pantalla
     """
-    global bdPasajeros, sumaFletes
     print("\n ===============")
     print(" Opción 4")
     print("================")
     datosBrutos, total = verPasajerosRegistrados(bdPasajeros, sumaFletes)
-    if datosBrutos == "":
+    if datosBrutos == "" or datosBrutos==None:
         print("\nNo hay pasajeros en el buffer.")
     else:
         print("\n--- Lista de pasajeros registrados ---")
@@ -344,7 +343,7 @@ def verPasajerosRegistradosaux():
     input("pulse ENTER para continuar: ")
     return
 
-def modificarPasajerosaux():
+def modificarPasajerosaux(bdPasajeros, bdVuelos):
     """
     Funcionalidad: Permite al usuario modificar los datos de un 
     pasajero existente y muestra el resultado en pantalla.
@@ -356,35 +355,35 @@ def modificarPasajerosaux():
     -mensaje(str): confirmación de modificación o mensaje de error
     mostrado en pantalla
     """
-    global bdPasajeros
     print("\n ===============")
     print(" Opción 5")
     print("================")
     if bdPasajeros == "":
         print("\nNo hay pasajeros en el buffer.")
         input("pulse ENTER para continuar: ")
-        return
+        return bdPasajeros
     codigoPasajero = input("ingrese el código de vuelo del pasajero que quiere modificar: ").strip().upper()
-    if not detectarVuelo(codigoPasajero) or codigoPasajero=="":
-        print("Error: Pasajero no encontrado")
+    if not detectarVuelo(codigoPasajero, bdVuelos) or codigoPasajero=="":
+        print(f"El pasajero {codigoPasajero} no fué encontrado")
         input("pulse ENTER para continuar: ")
-        return
+        return bdPasajeros
     nuevoNombre = input("ingrese el nuevo nombre: ")
     if not validarNombre(nuevoNombre):
-        print ("Error: Debe ingresar un nombre y seguir el formato de este (nombre apellido)")
+        print ("Debe ingresar un nombre y seguir el formato de este (nombre apellido)")
         input("pulse ENTER para continuar: ")
-        return
+        return bdPasajeros
     nuevoCorreo = input("ingrese el nuevo correo: ")
     if not validarEmail(nuevoCorreo):
-        print("Error: Email inválido.")
+        print("Email inválido. El email debe ser suCorreo@foo.com")
         input("pulse ENTER para continuar: ")
-        return
+        return bdPasajeros
     nuevoNombre=normalizarNombre(nuevoNombre)
-    modificarPasajeros(nuevoNombre,nuevoCorreo,codigoPasajero)
+    nuevaLista=modificarPasajeros(nuevoNombre,nuevoCorreo,codigoPasajero, bdPasajeros)
     print("Pasajero modificado con éxito")
     input("pulse ENTER para continuar: ")
+    return nuevaLista
 
-def modificarPasajeros(nuevoNombre,nuevoCorreo,codigoPasajero):
+def modificarPasajeros(nuevoNombre,nuevoCorreo,codigoPasajero, bdPasajeros):
     """
     Funcionalidad: Modifica el nombre y correo de un pasajero 
     específico en la base de datos.
@@ -395,7 +394,6 @@ def modificarPasajeros(nuevoNombre,nuevoCorreo,codigoPasajero):
     Salidas:
     -No retorna valores (actualiza la base de datos global)
     """
-    global bdPasajeros
     nuevaLista=""
     pasajeros= bdPasajeros.split("¬")
     cantidadPasajeros=len(pasajeros)
@@ -418,4 +416,4 @@ def modificarPasajeros(nuevoNombre,nuevoCorreo,codigoPasajero):
             else:
                 nuevaLista+=f"¬{pasajeros[i]}"
     bdPasajeros=nuevaLista
-    return
+    return bdPasajeros
