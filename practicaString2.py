@@ -5,8 +5,10 @@
 
 # definicion de funciones
 # Reto 3 stringv2
+"""
 def invertirPalabras (ptexto):
     """
+    """"
     Funcionalidad:
     Invierte el texto ingresado siempre que termine en una vocal. Luego solicita
     nuevamente una palabra al usuario de forma recursiva.
@@ -14,6 +16,7 @@ def invertirPalabras (ptexto):
     -ptexto(str): texto o palabra ingresada por el usuario que se desea invertir
     Salidas:
     -resultado(str): texto invertido 
+    """
     """
     
     if ptexto=="0":
@@ -28,7 +31,7 @@ def invertirPalabras (ptexto):
         print (resultado)
     return 
 
-
+"""
 # Reto 5 stringv2
 import time
 from datetime import date
