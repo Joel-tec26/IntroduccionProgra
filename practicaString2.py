@@ -26,7 +26,8 @@ def invertirPalabras (ptexto):
             resultado+= letra
             indice-=1
         print (resultado)
-    return invertirPalabras(input("ingrese una palabra: "))
+    return 
+
 
 # Reto 5 stringv2
 import time
@@ -123,7 +124,6 @@ def despedasarUrl (ptexto):
 
 #programa principal 
 # Reto 3 stringv2
-"""""
 print ("Reto 3 srtingv2")
 print(invertirPalabras(input("ingrese una palabra: ")))
 print()
@@ -135,7 +135,7 @@ print (calcularEdad("2000-01-04", obtenerFecha()))
 print (calcularEdad("2026-08-26", obtenerFecha()))
 print (calcularEdad("2026-01-05", obtenerFecha()))
 print()
-"""
+
 # reto 3 examenParte2
 print("\n reto 3 examenParte2")
 print(despedasarUrl("http://www.alegsa.com.ar/Diccionario/index.php"))
