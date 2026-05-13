@@ -1,6 +1,6 @@
 # Creado por: Joel Porras, María José Espinoza y Alexis Torres
-# Fecha de creación: 06/05/2026 10am
-# Ultima modificación: 13/05/2026 3pm
+# Fecha de creación: 13/05/2026 10am
+# Ultima modificación: 13/05/2026 5pm
 # versión: 3.14
 
 #definicion de clases
