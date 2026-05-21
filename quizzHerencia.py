@@ -1,13 +1,13 @@
-#
-#
-#
-#
+# Creado por: Joel Porras, Maria José Espinoza y Alexis Torres
+# Fecha de creación: 20//2026 9:30am
+# Ultima Modificación: 21/05/2026 14:55pm
+# Versión: 3.14
 
 # definicion de clase
 
 class Animal:
     def __init__(self, pid, pnombre, ptipo):
-        self.idA= pid
+        self.idA= pid05
         self.nombreA= pnombre
         self.tipo= ptipo
         return
@@ -15,7 +15,6 @@ class Animal:
     def mostrarTodo(self):
         print (self.idA)
         print (self.nombreA)
-        print (self.tipo)
         return 
     
 class Mamifero(Animal):
@@ -25,7 +24,7 @@ class Mamifero(Animal):
         return
     def mostrar(self):
         Animal.mostrarTodo(self)
-        print(self.gestacion)
+        print(self.gestacion[0], tipo(self.gestacion))
 
 class Ave(Animal):
     def __init__(self, pid, pnombre, paltura):
@@ -35,7 +34,9 @@ class Ave(Animal):
     def mostrar(self):
         Animal.mostrarTodo(self)
         print(self.alturaMaxima)
-    
+
+#definicion de funciones
+
 def tipo (ptipo):
     if ptipo[1]==1:
         return "Semanas"
@@ -83,6 +84,8 @@ while True:
             if animal.tipo == "Ave":
                if animal.idA == id:
                   animal.mostrar()
+    else:
+        print("Opción incorrecta")
 
     
 
