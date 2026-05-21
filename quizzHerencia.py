@@ -7,7 +7,7 @@
 
 class Animal:
     def __init__(self, pid, pnombre, ptipo):
-        self.idA= pid05
+        self.idA= pid
         self.nombreA= pnombre
         self.tipo= ptipo
         return
