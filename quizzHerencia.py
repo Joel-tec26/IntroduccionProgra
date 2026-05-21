@@ -1,5 +1,5 @@
 # Creado por: Joel Porras, Maria José Espinoza y Alexis Torres
-# Fecha de creación: 20//2026 9:30am
+# Fecha de creación: 20/05/2026 9:30am
 # Ultima Modificación: 21/05/2026 14:55pm
 # Versión: 3.14
 
